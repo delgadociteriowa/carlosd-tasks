@@ -1,14 +1,46 @@
+'use client';
+import { useState } from "react";
+import { useAppDispatch } from '@/state/hooks';
+import { addTask } from "@/state/user/userSlice";
+import { Task, TaskState } from "@/types/user";
+
 const TaskForm = () => {
+  const dispatch = useAppDispatch();
+  const [taskState, setTaskState] = useState<TaskState>("completada");
+  const [description, setDescription] = useState("");
+  
+  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!description || !taskState) return;
+
+    const newTask: Task = {
+      id: crypto.randomUUID(),
+      owner: '',
+      state: taskState,
+      description,
+    };
+
+    dispatch(addTask(newTask));
+
+    setTaskState("completada");
+    setDescription("");
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="flex flex-wrap md:flex-nowrap gap-3 mb-6">
-        <input type="text" placeholder="Agregar tarea" className="w-full md:w-[70%] px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+        <input
+          type="text"
+          placeholder="Agregar tarea"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full md:w-[70%] px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         <select
           className="w-full md:w-[15%] px-3 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          defaultValue=""
-          autoComplete="off"
+          value={taskState}
+          onChange={(e) => setTaskState(e.target.value as TaskState)}
         >
-          <option value="" disabled>Estado</option>
           <option value="por-hacer">Por hacer</option>
           <option value="en-progreso">En progreso</option>
           <option value="completada">Completada</option>

@@ -29,6 +29,7 @@ const TasksList = () => {
       {tasks.map(task => (
         <TaskItem
           key={task.id}
+          id={task.id}
           state={task.state}
           description={task.description}
         />

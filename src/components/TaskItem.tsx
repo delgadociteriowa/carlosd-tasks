@@ -1,9 +1,26 @@
+'use client';
+
+import { useAppDispatch} from '@/state/hooks';
+import { deleteTask } from '@/state/user/userSlice';
+
 interface TaskItemProps {
+  id: string;
   state: 'por-hacer' | 'en-progreso' | 'completada';
   description: string;
 }
 
-const TaskItem = ({state, description} : TaskItemProps) => {
+const TaskItem = ({id, state, description} : TaskItemProps) => {
+  const dispatch = useAppDispatch();
+
+  const handleDelete = () => {
+    const confirmDelete = window.confirm(
+    `¿Seguro que deseas borrar la tarea: "${description}"?`
+    );
+
+    if (!confirmDelete) return;
+    dispatch(deleteTask(id));
+  };
+
   return (
     <li className="w-full px-4 py-3 rounded-xl border border-gray-300 flex items-center justify-between group mb-2">
       <div className="flex items-center gap-4">
@@ -44,7 +61,7 @@ const TaskItem = ({state, description} : TaskItemProps) => {
           </span>
         </div>
         <div className="relative group/delete">
-          <button className="p-2 rounded-full hover:bg-gray-100 transition cursor-pointer">
+          <button onClick={handleDelete} className="p-2 rounded-full hover:bg-gray-100 transition cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 text-red-500"

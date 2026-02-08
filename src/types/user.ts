@@ -1,7 +1,9 @@
+export type TaskState = 'por-hacer' | 'en-progreso' | 'completada';
+
 export interface Task {
   id: string;
   owner: string;
-  state: 'por-hacer' | 'en-progreso' | 'completada';
+  state: TaskState;
   description: string;
 }
 

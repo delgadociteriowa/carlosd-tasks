@@ -3,7 +3,7 @@ import {
   Task,
   UserStateType,
 } from "../../types/user";
-import { dataBaseMockUsers, dataBaseMockTasks } from "./dataBaseMock";
+import { dataBaseMockTasks } from "./dataBaseMock";
 
 
 export const getTasks = createAsyncThunk<
@@ -29,7 +29,63 @@ export const getTasks = createAsyncThunk<
       return rejectWithValue('The server failed to fetch the tasks');
     }
   }
-)
+);
+
+export const addTask = createAsyncThunk<
+  Task,
+  Task,
+  {
+    rejectValue: string;
+    state: { user: UserStateType };
+  }
+>(
+  "user/addTask",
+  async (task, { rejectWithValue, getState }) => {
+    try {
+      const { user } = getState().user;
+
+      if (!user) throw new Error('There is no user');
+
+      const taskWithOwner: Task = {
+        ...task,
+        owner: user.id,
+      };
+
+      const result = await new Promise<Task>((resolve) => {
+        setTimeout(() => {
+          resolve(taskWithOwner);
+        }, 500);
+      });
+
+      return result;
+    } catch (error) {
+      return rejectWithValue("The server failed to add the task");
+    }
+  }
+);
+
+export const deleteTask = createAsyncThunk<
+  string,
+  string,
+  {
+    rejectValue: string;
+  }
+>(
+  "user/deleteTask",
+  async (taskId, { rejectWithValue }) => {
+    try {
+      const result = await new Promise<string>((resolve) => {
+        setTimeout(() => {
+          resolve(taskId);
+        }, 500);
+      });
+
+      return result;
+    } catch (error) {
+      return rejectWithValue("The server failed to remove the task");
+    }
+  }
+);
 
 
 const initialState: UserStateType = {
@@ -57,6 +113,32 @@ const userSlice = createSlice({
         state.loading = false;
       })
       .addCase(getTasks.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? 'Unknown Error';
+      })
+      .addCase(addTask.pending, (state) => {
+        state.loading = true;
+        state.error = '';
+      })
+      .addCase(addTask.fulfilled, (state, action) => {
+        state.tasks.push (action.payload);
+        state.loading = false;
+      })
+      .addCase(addTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? 'Unknown Error';
+      })
+      .addCase(deleteTask.pending, (state) => {
+        state.loading = true;
+        state.error = '';
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter(
+          (task) => task.id !== action.payload
+        );
+        state.loading = false;
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? 'Unknown Error';
       })
