@@ -1,6 +1,6 @@
 import Navigation from './Navigation';
 
-const HeroSection = () => {
+const Header = () => {
 
   return (
     <header>
@@ -9,4 +9,4 @@ const HeroSection = () => {
   )
 };
 
-export default HeroSection;
+export default Header;

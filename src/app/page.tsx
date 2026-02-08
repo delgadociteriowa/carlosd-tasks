@@ -1,10 +1,12 @@
 import Image from "next/image";
-import HeroSection from "@/components/HeroSection";
+import Header from "@/components/Header";
+import MainSection from "@/components/MainSection";
 
 export default function Home() {
   return (
     <>
-      <HeroSection/>
+      <Header/>
+      <MainSection/>
     </>
   );
 }
