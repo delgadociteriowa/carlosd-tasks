@@ -1,12 +1,24 @@
-const TaskItem = () => {
+interface TaskItemProps {
+  state: 'por-hacer' | 'en-progreso' | 'completada';
+  description: string;
+}
+
+const TaskItem = ({state, description} : TaskItemProps) => {
   return (
     <li className="w-full px-4 py-3 rounded-xl border border-gray-300 flex items-center justify-between group mb-2">
       <div className="flex items-center gap-4">
-        <span className="bg-sky-500 text-white text-sm px-3 py-1 rounded-lg w-26 text-center">
-          Completada
+        <span className={`
+          text-white text-sm px-3 py-1 rounded-lg w-26 text-center
+          ${state === 'por-hacer' && 'bg-red-500'}
+          ${state === 'en-progreso' && 'bg-yellow-500'}
+          ${state === 'completada' && 'bg-green-500'}
+          `}>
+          {state === 'por-hacer' && 'Por hacer'}
+          {state === 'en-progreso' && 'En Progreso'}
+          {state === 'completada' && 'Completada'}
         </span>
         <p className="text-gray-800">
-          Comprar manzanas
+          {description}
         </p>
       </div>
       <div className="flex items-center gap-4">

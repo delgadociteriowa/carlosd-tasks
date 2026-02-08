@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import  Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Reto de Codificación",
@@ -13,9 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        {children}
-      </body>
+      <Providers>
+        <body>
+          {children}
+        </body>
+      </Providers>
     </html>
   );
 }
