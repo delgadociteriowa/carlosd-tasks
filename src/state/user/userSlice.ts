@@ -6,6 +6,7 @@ import {
 } from "../../types/user";
 import { dataBaseMockTasks, dataBaseMockUsers } from "./dataBaseMock";
 
+// Fetches tasks for a given user ID
 export const getTasks = createAsyncThunk<
   Task[],
   string,   
@@ -31,6 +32,7 @@ export const getTasks = createAsyncThunk<
   }
 );
 
+// Adds a new task for the current user
 export const addTask = createAsyncThunk<
   Task,
   Task,
@@ -64,6 +66,7 @@ export const addTask = createAsyncThunk<
   }
 );
 
+// Updates the state and description of a selected task
 export const editTask = createAsyncThunk<
   {
     id: string;
@@ -103,6 +106,7 @@ export const editTask = createAsyncThunk<
   }
 );
 
+// Deletes a task by its ID
 export const deleteTask = createAsyncThunk<
   string,
   string,

@@ -24,6 +24,13 @@ bun dev
 
 Al abrir [http://localhost:3000](http://localhost:3000) podrá ver el resultado.
 
+## Ingresar
+
+Puede ingresar mediante la página de /login utilizando las credenciales:
+
+username: Puede utilizar 'john' o 'jane' (cada usuario retornará tareas iniciales distintas)
+password: '123456'
+
 ## Ejecutar Tests
 
 ```bash
