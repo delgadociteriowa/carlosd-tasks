@@ -4,7 +4,7 @@ import {
   TaskState,
   UserStateType,
 } from "../../types/user";
-import { dataBaseMockTasks } from "./dataBaseMock";
+import { dataBaseMockTasks, dataBaseMockUsers } from "./dataBaseMock";
 
 export const getTasks = createAsyncThunk<
   Task[],
@@ -129,8 +129,8 @@ export const deleteTask = createAsyncThunk<
 
 const initialState: UserStateType = {
   user: {
-    id: 'a3964',
-    name: 'John'
+    id: '',
+    name: ''
   },
   tasks: [],
   loading: false,
@@ -145,6 +145,33 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers:{
+    setUser:  (state, action: PayloadAction<string>) => {
+      const tokenId = action.payload;
+
+      const userFound = dataBaseMockUsers.find(
+        (user) => user.id === tokenId
+      );
+
+      if (!userFound) return;
+
+      state.user = {
+        id: userFound.id,
+        name: userFound.name,
+      };
+    },
+    logout: (state) => {
+      state.user = {
+        id: '',
+        name: '',
+      };
+      state.tasks = [];
+      state.loading = false;
+      state.error = '';
+      state.editMode = false;
+      state.editTaskId = '';
+      state.editTaskState = '';
+      state.editTaskDescription = '';
+    },
     selectTaskToEdit:  (state, action: PayloadAction<string>) => {
       const taskId = action.payload;
 
@@ -229,5 +256,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { selectTaskToEdit } = userSlice.actions;
+export const { setUser, logout, selectTaskToEdit } = userSlice.actions;
 export default userSlice.reducer;

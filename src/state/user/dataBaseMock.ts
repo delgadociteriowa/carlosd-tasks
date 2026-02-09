@@ -3,16 +3,25 @@ import {
   Task,
 } from "../../types/user";
 
-export const dataBaseMockUsers: User[] = [
+interface UserCredentials extends User {
+  login: string;
+  password: string;
+}
+
+export const dataBaseMockUsers: UserCredentials[] = [
   {
     id: 'a3964',
-    name: 'John'
+    name: 'John',
+    login: 'john',
+    password: '123456',
   },
   {
     id: 'b3964',
-    name: 'Jane'
+    name: 'Jane',
+    login: 'jane',
+    password: '123456',
   },
-]
+];
 
 export const dataBaseMockTasks: Task[] = [
   {
