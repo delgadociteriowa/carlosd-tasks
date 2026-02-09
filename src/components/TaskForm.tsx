@@ -1,14 +1,33 @@
 'use client';
-import { useState } from "react";
-import { useAppDispatch } from '@/state/hooks';
-import { addTask } from "@/state/user/userSlice";
+import { useState, useEffect } from "react";
+import { useAppSelector, useAppDispatch } from '@/state/hooks';
+import { addTask, editTask } from "@/state/user/userSlice";
 import { Task, TaskState } from "@/types/user";
 
 const TaskForm = () => {
   const dispatch = useAppDispatch();
+
+  const {
+    editMode,
+    editTaskState,
+    editTaskDescription
+  } = useAppSelector(
+    (state) => state.user
+  )
+
   const [taskState, setTaskState] = useState<TaskState>("completada");
-  const [description, setDescription] = useState("");
-  
+  const [description, setDescription] = useState('');
+
+  useEffect(() => {
+    if(editMode) {
+      setTaskState(editTaskState as TaskState);
+      setDescription(editTaskDescription);
+    } else {
+      setTaskState("completada");
+      setDescription('');
+    }
+  }, [editMode])
+
   const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -21,7 +40,11 @@ const TaskForm = () => {
       description,
     };
 
-    dispatch(addTask(newTask));
+    if(!editMode) {
+      dispatch(addTask(newTask));
+    } else {
+      dispatch(editTask({newState: taskState, newDescription: description}));
+    }
 
     setTaskState("completada");
     setDescription("");
@@ -45,8 +68,8 @@ const TaskForm = () => {
           <option value="en-progreso">En progreso</option>
           <option value="completada">Completada</option>
         </select>
-        <button type="submit" className="w-full md:w-[15%] bg-indigo-600 hover:bg-indigo-500 py-3 rounded-2xl text-stone-100 text-lg tracking-[2px] shadow-xl/10 transition-colors cursor-pointer">
-          Agregar
+        <button type="submit" className={`${editMode ? 'bg-yellow-600 hover:bg-yellow-500' : 'bg-indigo-600 hover:bg-indigo-500'} w-full md:w-[15%]  py-3 rounded-2xl text-stone-100 text-lg tracking-[2px] shadow-xl/10 transition-colors cursor-pointer`}>
+          {editMode ? 'Editar' : 'Agregar'}
         </button>
       </div>
     </form>

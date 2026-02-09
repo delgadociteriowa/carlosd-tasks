@@ -17,4 +17,8 @@ export interface UserStateType {
   tasks: Task[];
   loading: boolean;
   error: string;
+  editMode: boolean;
+  editTaskId: string;
+  editTaskState: TaskState | '';
+  editTaskDescription: string;
 }

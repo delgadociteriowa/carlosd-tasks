@@ -1,7 +1,7 @@
 'use client';
 
-import { useAppDispatch} from '@/state/hooks';
-import { deleteTask } from '@/state/user/userSlice';
+import { useAppSelector, useAppDispatch} from '@/state/hooks';
+import { deleteTask, selectTaskToEdit } from '@/state/user/userSlice';
 
 interface TaskItemProps {
   id: string;
@@ -11,6 +11,12 @@ interface TaskItemProps {
 
 const TaskItem = ({id, state, description} : TaskItemProps) => {
   const dispatch = useAppDispatch();
+
+  const { editMode } = useAppSelector((state) => state.user)
+
+  const handleSelectToEdit = () => {
+    dispatch(selectTaskToEdit(id));
+  };
 
   const handleDelete = () => {
     const confirmDelete = window.confirm(
@@ -40,10 +46,10 @@ const TaskItem = ({id, state, description} : TaskItemProps) => {
       </div>
       <div className="flex items-center gap-4">
         <div className="relative group/edit">
-          <button className="p-2 rounded-full hover:bg-gray-100 transition cursor-pointer">
+          <button onClick={handleSelectToEdit} className={`${editMode ? 'cursor-not-allowed' : 'cursor-pointer'} p-2 rounded-full hover:bg-gray-100 transition`} disabled={editMode}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 text-yellow-500"
+              className={`h-8 w-8 ${editMode ? 'text-yellow-100' : 'text-yellow-500'}`}
               fill="none"
               viewBox="0 0 24 20"
               stroke="currentColor"
@@ -61,10 +67,10 @@ const TaskItem = ({id, state, description} : TaskItemProps) => {
           </span>
         </div>
         <div className="relative group/delete">
-          <button onClick={handleDelete} className="p-2 rounded-full hover:bg-gray-100 transition cursor-pointer">
+          <button onClick={handleDelete}  className={`${editMode ? 'cursor-not-allowed' : 'cursor-pointer'} p-2 rounded-full hover:bg-gray-100 transition`} disabled={editMode}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-red-500"
+              className={`h-6 w-6 ${editMode ? 'text-red-100' : 'text-red-500'}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

@@ -1,10 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   Task,
+  TaskState,
   UserStateType,
 } from "../../types/user";
 import { dataBaseMockTasks } from "./dataBaseMock";
-
 
 export const getTasks = createAsyncThunk<
   Task[],
@@ -64,6 +64,45 @@ export const addTask = createAsyncThunk<
   }
 );
 
+export const editTask = createAsyncThunk<
+  {
+    id: string;
+    newState: string;
+    newDescription: string;
+  },
+  {
+    newState: string;
+    newDescription: string;
+  },
+  {
+    rejectValue: string;
+    state: { user: UserStateType };
+  }
+>(
+  "user/editTask",
+  async ({ newState, newDescription }, { getState, rejectWithValue }) => {
+   try {
+      const { editTaskId } = getState().user;
+
+      if (!editTaskId) {
+        throw new Error('No task selected to edit');
+      }
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
+
+      return {
+        id: editTaskId,
+        newState,
+        newDescription,
+      };
+    } catch (error) {
+      return rejectWithValue("The server failed to edit the task");
+    }
+  }
+);
+
 export const deleteTask = createAsyncThunk<
   string,
   string,
@@ -96,12 +135,31 @@ const initialState: UserStateType = {
   tasks: [],
   loading: false,
   error: '',
+  editMode: false,
+  editTaskId: '',
+  editTaskState: '',
+  editTaskDescription: '',
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers:{},
+  reducers:{
+    selectTaskToEdit:  (state, action: PayloadAction<string>) => {
+      const taskId = action.payload;
+
+      const taskToEdit = state.tasks.find(
+        (task) => task.id === taskId
+      );
+
+      if (!taskToEdit) return;
+
+      state.editMode = true;
+      state.editTaskId = taskId;
+      state.editTaskState = taskToEdit.state;
+      state.editTaskDescription = taskToEdit.description;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getTasks.pending, (state) => {
@@ -128,6 +186,32 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload ?? 'Unknown Error';
       })
+      .addCase(editTask.pending, (state) => {
+        state.loading = true;
+        state.error = '';
+      })
+      .addCase(editTask.fulfilled, (state, action) => {
+        const { id, newState, newDescription } = action.payload;
+
+        const task = state.tasks.find(
+          (task) => task.id === id
+        );
+
+        if (task) {
+          task.state = newState as TaskState;
+          task.description = newDescription;
+        }
+
+        state.editMode = false;
+        state.editTaskId = '';
+        state.editTaskState = '';
+        state.editTaskDescription = '';
+        state.loading = false;
+      })
+      .addCase(editTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? 'Unknown Error';
+      })
       .addCase(deleteTask.pending, (state) => {
         state.loading = true;
         state.error = '';
@@ -145,4 +229,5 @@ const userSlice = createSlice({
   }
 });
 
+export const { selectTaskToEdit } = userSlice.actions;
 export default userSlice.reducer;
